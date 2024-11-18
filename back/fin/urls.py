@@ -20,5 +20,7 @@ from . import views
 app_name='fin'
 
 urlpatterns = [
-    path('',views.index,name='index')
+    path('saving/',views.get_saving,name='get_saving'),
+    path('deposit/',views.get_deposit,name='get_deposit'),
+    path('exchange_rate/',views.exchange_rate,name='exchange_rate')
 ]
