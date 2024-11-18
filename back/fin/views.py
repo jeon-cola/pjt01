@@ -2,8 +2,6 @@ from django.shortcuts import render
 # views.py
 import requests
 from django.http import JsonResponse
-API_KEY='c22c8b2d800dd8097f28d84f4506fc54'
-EXCHANGE_KEY='Q03jnie3N7LkEkXU7jFRd272z0Ur2zmI'
 def get_saving(request):
     url = 'https://finlife.fss.or.kr/finlifeapi/savingProductsSearch.json'
     params = {
