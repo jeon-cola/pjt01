@@ -37,5 +37,7 @@ def exchange_rate(request):
         'searchdate': '20241118',
     }
     response = requests.get(url, params=params)
+    print('---------------------')
+    print(response)
     data = response.json()
     return JsonResponse(data,safe=False)
