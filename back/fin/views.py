@@ -2,6 +2,8 @@ from django.shortcuts import render
 # views.py
 import requests
 from django.http import JsonResponse
+API_KEY='c22c8b2d800dd8097f28d84f4506fc54'
+EXCHANGE_KEY='Q03jnie3N7LkEkXU7jFRd272z0Ur2zmI'
 def get_saving(request):
     url = 'https://finlife.fss.or.kr/finlifeapi/savingProductsSearch.json'
     params = {
@@ -32,9 +34,8 @@ def exchange_rate(request):
     params = {
         'authkey': EXCHANGE_KEY,
         'data':'AP01',
-        'changeOrigin': True,
+        'searchdate': '20241118',
     }
     response = requests.get(url, params=params)
     data = response.json()
-    print(data)
     return JsonResponse(data,safe=False)
