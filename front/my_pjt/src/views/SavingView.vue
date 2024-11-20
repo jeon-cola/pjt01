@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>Saving Page</h1>
-    <div v-if="store.savingList.result?.baseList">
+    <div v-if="filteredData.length>0">
       <div>
         <select v-model="selectedKorCoNm">
           <option value="" disabled selected>은행 선택</option>
@@ -40,13 +40,10 @@
           class="list-group-item" 
           v-for="(result, index) in filteredData" 
           :key="index"
+          @click="goToDetail(result)"
         >
           <p><strong>은행명:</strong> {{ result.kor_co_nm }}</p>
           <p><strong>상품명:</strong> {{ result.fin_prdt_nm }}</p>
-          <p><strong>가입 방법:</strong> {{ result.join_way }}</p>
-          <p><strong>만기 후 이율:</strong> {{ result.mtrt_int }}</p>
-          <p><strong>특별 조건:</strong> {{ result.spcl_cnd }}</p>
-          <p><strong>기타 정보:</strong> {{ result.etc_note }}</p>
           <p><strong>금리:</strong> {{ result.intr_rate }}<strong>%</strong></p>
           <p><strong>우대 금리:</strong> {{ result.intr_rate2 }}<strong>%</strong></p>
           <p><strong>금리 유형:</strong> {{ result.intr_rate_type_nm }}</p>
@@ -64,12 +61,12 @@
 <script setup>
 import { onMounted, computed, ref } from 'vue';
 import { useCounterStore } from '@/stores/counter';
-
+import { useRouter } from 'vue-router';
+const router = useRouter()
 const store = useCounterStore();
-
 // 컴포넌트가 마운트된 후 API 호출
 onMounted(() => {
-  store.getSaving();
+  store.getSaving(); // 비동기 API 호출 완료될 때까지 대기
 });
 
 const selectedKorCoNm = ref(""); // 회사명
@@ -85,13 +82,13 @@ const uniqueKorCoNm = computed(() => [...new Set(store.filterData2.map(item => i
 // 금리 중복 제거 (회사명 필터 적용)
 const uniqueIntrRate = computed(() => {
   if (selectedKorCoNm.value === 'none' || !selectedKorCoNm.value) {
-    return [...new Set(store.filterData2.map(item => item.intr_rate))];
+    return [...new Set(store.filterData2.map(item => item.intr_rate).sort())];
   }
   return [
     ...new Set(
       store.filterData2
         .filter(item => item.kor_co_nm === selectedKorCoNm.value)
-        .map(item => item.intr_rate)
+        .map(item => item.intr_rate).sort()
     )
   ];
 });
@@ -99,7 +96,7 @@ const uniqueIntrRate = computed(() => {
 // 추가 금리 중복 제거 (회사명 + 금리 필터 적용)
 const uniqueIntrRate2 = computed(() => {
   if (selectedKorCoNm.value === 'none' || selectedIntrRate.value === 'none' || !selectedKorCoNm.value || !selectedIntrRate.value) {
-    return [...new Set(store.filterData2.map(item => item.intr_rate2))];
+    return [...new Set(store.filterData2.map(item => item.intr_rate2).sort())];
   }
   return [
     ...new Set(
@@ -108,7 +105,7 @@ const uniqueIntrRate2 = computed(() => {
           item.kor_co_nm === selectedKorCoNm.value &&
           item.intr_rate === Number(selectedIntrRate.value)
         )
-        .map(item => item.intr_rate2)
+        .map(item => item.intr_rate2).sort()
     )
   ];
 });
@@ -116,7 +113,7 @@ const uniqueIntrRate2 = computed(() => {
 // 금리 유형 중복 제거 (회사명 + 금리 + 추가 금리 필터 적용)
 const uniqueIntrRateTypeNm = computed(() => {
   if (selectedKorCoNm.value === 'none' || selectedIntrRate.value === 'none' || selectedIntrRate2.value === 'none' || !selectedKorCoNm.value || !selectedIntrRate.value || !selectedIntrRate2.value) {
-    return [...new Set(store.filterData2.map(item => item.intr_rate_type_nm))];
+    return [...new Set(store.filterData2.map(item => item.intr_rate_type_nm).sort())];
   }
   return [
     ...new Set(
@@ -126,7 +123,7 @@ const uniqueIntrRateTypeNm = computed(() => {
           item.intr_rate === Number(selectedIntrRate.value) &&
           item.intr_rate2 === Number(selectedIntrRate2.value)
         )
-        .map(item => item.intr_rate_type_nm)
+        .map(item => item.intr_rate_type_nm).sort()
     )
   ];
 });
@@ -134,7 +131,7 @@ const uniqueIntrRateTypeNm = computed(() => {
 // 적금 유형 중복 제거 (모든 필터 적용)
 const uniqueRsrvTypeNm = computed(() => {
   if (selectedKorCoNm.value === 'none' || selectedIntrRate.value === 'none' || selectedIntrRate2.value === 'none' || selectedIntrRateTypeNm.value === 'none' || !selectedKorCoNm.value || !selectedIntrRate.value || !selectedIntrRate2.value || !selectedIntrRateTypeNm.value) {
-    return [...new Set(store.filterData2.map(item => item.rsrv_type_nm))];
+    return [...new Set(store.filterData2.map(item => item.rsrv_type_nm).sort())];
   }
   return [
     ...new Set(
@@ -145,7 +142,7 @@ const uniqueRsrvTypeNm = computed(() => {
           item.intr_rate2 === Number(selectedIntrRate2.value) &&
           item.intr_rate_type_nm === selectedIntrRateTypeNm.value
         )
-        .map(item => item.rsrv_type_nm)
+        .map(item => item.rsrv_type_nm).sort()
     )
   ];
 });
@@ -153,7 +150,7 @@ const uniqueRsrvTypeNm = computed(() => {
 // 저축 기간 중복 제거 (모든 필터 적용)
 const uniqueSaveTrm = computed(() => {
   if (selectedKorCoNm.value === 'none' || selectedIntrRate.value === 'none' || selectedIntrRate2.value === 'none' || selectedIntrRateTypeNm.value === 'none' || selectedRsrvTypeNm.value === 'none' || !selectedKorCoNm.value || !selectedIntrRate.value || !selectedIntrRate2.value || !selectedIntrRateTypeNm.value || !selectedRsrvTypeNm.value) {
-    return [...new Set(store.filterData2.map(item => item.save_trm))];
+    return [...new Set(store.filterData2.map(item => item.save_trm).sort())];
   }
   return [
     ...new Set(
@@ -165,7 +162,7 @@ const uniqueSaveTrm = computed(() => {
           item.intr_rate_type_nm === selectedIntrRateTypeNm.value &&
           item.rsrv_type_nm === selectedRsrvTypeNm.value
         )
-        .map(item => item.save_trm)
+        .map(item => item.save_trm).sort()
     )
   ];
 });
@@ -181,6 +178,11 @@ const filteredData = computed(() => {
       (selectedRsrvTypeNm.value === 'none' || !selectedRsrvTypeNm.value || item.rsrv_type_nm === selectedRsrvTypeNm.value) &&
       (selectedSaveTrm.value === 'none' || !selectedSaveTrm.value || item.save_trm === Number(selectedSaveTrm.value))
     );
-  });
+  }).sort();
 });
+
+const goToDetail = async (result) => {
+  await store.goToDetail(result); 
+  router.push({ name: 'detail' }); 
+};
 </script>

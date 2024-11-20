@@ -7,10 +7,14 @@ export const useCounterStore = defineStore('counter', () => {
   const savingList=ref([])
   const exchangeRateList=ref([])
   const filterData = ref([])
+  const result = ref(([]))
+  const goToDetail = function(lst){
+    result.value=lst
+  }
   const filterGo = function(){
     depositList.value.result.baseList.forEach(i => {
         depositList.value.result.optionList.forEach(j=>{
-            if (i.fin_co_no === j.fin_co_no) {
+            if (i.fin_prdt_cd === j.fin_prdt_cd) {
                 filterData.value.push({
                   kor_co_nm: i.kor_co_nm,
                   fin_prdt_nm: i.fin_prdt_nm,
@@ -31,7 +35,7 @@ const filterData2 = ref([])
 const filterGo2 = function(){
   savingList.value.result.baseList.forEach(i => {
       savingList.value.result.optionList.forEach(j=>{
-          if (i.fin_co_no === j.fin_co_no) {
+          if (i.fin_prdt_cd === j.fin_prdt_cd) {
               filterData2.value.push({
                 kor_co_nm: i.kor_co_nm,
                   fin_prdt_nm: i.fin_prdt_nm,
@@ -83,5 +87,5 @@ const filterGo2 = function(){
       console.error('에러 발생:', error.message);
     });
   };
-  return { getDeposit,depositList,getSaving,savingList,exchangeRateList,getExchangeRate,filterData,filterGo,filterData2,filterGo2};
+  return { getDeposit,depositList,getSaving,savingList,exchangeRateList,getExchangeRate,filterData,filterGo,filterData2,filterGo2,goToDetail,result};
 });

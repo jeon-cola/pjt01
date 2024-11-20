@@ -9,6 +9,8 @@ import Posts from '@/components/Posts.vue';
 import MyProfile from '@/components/MyProfile.vue';
 import EditProfile from '@/components/EditProfile.vue';
 import Signup from '@/components/Signup.vue'
+import DetailView from '@/views/DetailView.vue'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,18 +23,23 @@ const router = createRouter({
     {
       path: '/saving',
       name: 'saving',
-      component: SavingView
+      component: SavingView,
     },
     {
       path: '/deposit',
       name: 'deposit',
-      component: depositView
+      component: depositView,
     },
     {
       path:'/exchange_rate',
       name:'exchange_rate',
       component:ExchangeRateView
     },
+    {
+      path:'/detail',
+      name:'detail',
+      component:DetailView,
+      props:true},
     {
       path:'/map',
       name:'map',
@@ -62,7 +69,7 @@ const router = createRouter({
       path: '/profile/edit',
       name: 'editProfile',
       component:EditProfile
-    }
+    },
   ],
 })
 
