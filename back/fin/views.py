@@ -12,9 +12,20 @@ def get_saving(request):
         'pageNo': 1,
         'changeOrigin': True,
     }
+    data=[]
+    dataLst=[{'baseList':'','optionList':''}]
     response = requests.get(url, params=params)
-    data = response.json()
-    return JsonResponse(data)
+    data.append(response.json()['result'])
+    params = {
+        'auth': API_KEY,
+        'topFinGrpNo': '030300',
+        'changeOrigin': True,
+    }
+    for i in range(1,4):
+        params['pageNo'] = i
+        response = requests.get(url, params=params)
+        data.append(response.json()['result'])
+    return JsonResponse(data,safe=False)
 
 
 def get_deposit(request):
@@ -25,9 +36,19 @@ def get_deposit(request):
         'pageNo': 1,
         'changeOrigin': True,
     }
+    data=[]
     response = requests.get(url, params=params)
-    data = response.json()
-    return JsonResponse(data)
+    data.append(response.json()['result'])
+    params = {
+        'auth': API_KEY,
+        'topFinGrpNo': '030300',
+        'changeOrigin': True,
+    }
+    for i in range(1,5):
+        params['pageNo'] = i
+        response = requests.get(url, params=params)
+        data.append(response.json()['result'])
+    return JsonResponse(data,safe=False)
 
 def exchange_rate(request):
     url = 'https://www.koreaexim.go.kr/site/program/financial/exchangeJSON'
