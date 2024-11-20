@@ -8,7 +8,7 @@ useKakao('cad4bc53cce81b2c6d4a0125d893b604', ['services']);
 
 const map = ref(null);
 const markerList = ref([]);
-const searchKeyword = ref('역삼역 맛집');
+const searchKeyword = ref('하남 삼성 공장');
 
 // 카카오 맵 로드 시 초기화
 const onLoadKakaoMap = (mapRef) => {

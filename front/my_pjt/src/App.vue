@@ -23,9 +23,7 @@
         <li class="nav-item">
           <RouterLink :to="{name:'map'}"  id="link">map</RouterLink>
         </li>
-        <li class="nav-item">
-          <RouterLink :to="{name:'signup'}"  id="link">signup</RouterLink>
-        </li>
+
       </ul>
     </div>
   </div>

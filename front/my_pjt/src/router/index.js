@@ -4,9 +4,6 @@ import SavingView from '@/views/SavingView.vue'
 import depositView from '@/views/depositView.vue'
 import ExchangeRateView from '@/views/ExchangeRateView.vue'
 import MapView from '@/views/MapView.vue'
-import SignupView from '@/views/SignupView.vue'
-import LoginView from '@/views/loginView.vue'
-
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -36,14 +33,6 @@ const router = createRouter({
       name:'map',
       component:MapView
     },
-    {
-      path:'/signup',
-      name:'signup',
-      component:SignupView,
-      children:[
-        {path:'/login',name:'login',component:LoginView}
-      ]
-    }
   ],
 })
 
