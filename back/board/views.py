@@ -1,69 +1,23 @@
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
-from django.shortcuts import get_object_or_404
-from .models import Article, Comment
-from .serializers import ArticleSerializer, ArticleListSerializer, CommentSerializer, CommentListSerializer
+from rest_framework import viewsets, permissions
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from .models import Post
+from .serializers import PostSerializer
 
-@api_view(['GET', 'POST'])
-def article_list(request):
-    if request.method == 'GET':
-        articles = Article.objects.all()
-        serializer = ArticleListSerializer(articles, many=True)
-        return Response(serializer.data)
-    
-    elif request.method == 'POST':
-        serializer = ArticleSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save(author=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def article_detail(request, article_pk):
-    article = get_object_or_404(Article, pk=article_pk)
-    
-    if request.method == 'GET':
-        serializer = ArticleSerializer(article)
-        return Response(serializer.data)
-    
-    elif request.method == 'PUT':
-        serializer = ArticleSerializer(article, data=request.data, partial=True)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data)
-    
-    elif request.method == 'DELETE':
-        article.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
-@api_view(['GET'])
-def comment_list(request):
-    comments = Comment.objects.all()
-    serializer = CommentListSerializer(comments, many=True)
-    return Response(serializer.data)
+    def get_permissions(self):
+        if self.action in ['update', 'partial_update', 'destroy']:
+            self.permission_classes = [permissions.IsAuthenticated]
+        return super().get_permissions()
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def comment_detail(request, comment_pk):
-    comment = get_object_or_404(Comment, pk=comment_pk)
-    
-    if request.method == 'GET':
-        serializer = CommentSerializer(comment)
-        return Response(serializer.data)
-    
-    elif request.method == 'PUT':
-        serializer = CommentSerializer(comment, data=request.data, partial=True)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data)
-    
-    elif request.method == 'DELETE':
-        comment.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-@api_view(['POST'])
-def comment_create(request, article_pk):
-    article = get_object_or_404(Article, pk=article_pk)
-    serializer = CommentSerializer(data=request.data)
-    if serializer.is_valid(raise_exception=True):
-        serializer.save(article=article, author=request.user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    def check_object_permissions(self, request, obj):
+        if self.action in ['update', 'partial_update', 'destroy']:
+            if obj.author != request.user:
+                self.permission_denied(request, "본인의 게시물만 수정 또는 삭제할 수 있습니다.")
+        super().check_object_permissions(request, obj)

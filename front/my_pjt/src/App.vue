@@ -23,7 +23,18 @@
         <li class="nav-item">
           <RouterLink :to="{name:'map'}"  id="link">map</RouterLink>
         </li>
-
+        <li class="nav-item">
+          <RouterLink :to="{name:'posts'}" id="link">게시물</RouterLink> <!-- 게시물 링크 추가 -->
+        </li>
+        <li class="nav-item" v-if="!isAuthenticated">
+          <RouterLink :to="{name:'login'}" id="link">login</RouterLink>
+        </li>
+        <li class="nav-item" v-if="isAuthenticated">
+          <button @click="handleLogout" id="link" style="background: none; border: none; cursor: pointer;">logout</button>
+        </li>
+        <li class="nav-item" v-if="isAuthenticated">
+          <RouterLink :to="{name:'profile'}" id="link">나의 프로필</RouterLink>
+        </li>
       </ul>
     </div>
   </div>
@@ -37,10 +48,29 @@
 </template>
 
 <script setup>
-import { RouterLink,RouterView } from 'vue-router';
+import { RouterLink, RouterView } from 'vue-router';
+import { computed } from 'vue';
+import { useUserStore} from '@/stores/user';
 import 'bootstrap/dist/css/bootstrap.min.css';
 // Bootstrap JS (옵션)
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+
+
+const userStore = useUserStore();
+
+// 로그인 상태 확인
+const isAuthenticated = computed(() => userStore.token !== null);
+
+// 로그아웃 처리 함수
+const handleLogout = async () => {
+  try {
+    await userStore.logout({
+      headers: { Authorization: `Token ${userStore.token}` }
+    });
+    alert('로그아웃 성공');
+  } catch (error) {
+    console.error('로그아웃 실패:')}
+  }
 </script>
 
 <style  scoped>

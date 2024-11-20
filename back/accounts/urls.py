@@ -1,11 +1,9 @@
-
 from django.urls import path
-from . import views
+from .views import SignUpView, ProfileView, LoginView, LogoutView
 
-app_name = 'accounts'
 urlpatterns = [
-    path('register/', views.register, name='register'),
-    path('login/', views.user_login, name='login'),
-    path('logout/', views.user_logout, name='logout'),
-    path('profile/', views.user_profile, name='user_profile'),
+    path('signup/', SignUpView.as_view(), name='signup'),
+    path('profile/', ProfileView.as_view(), name='profile'),
+    path('login/', LoginView.as_view(), name='login'),  # 로그인 경로 추가
+    path('logout/', LogoutView.as_view(), name='logout'),
 ]
