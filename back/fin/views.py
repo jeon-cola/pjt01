@@ -179,8 +179,8 @@ def exchange_rate(request):
         'data':'AP01',
         'searchdate': '20241118',
     }
-    response = requests.get(url, params=params)
+    response = requests.get(url, params=params,verify=False)
     print('---------------------')
     print(response)
     data = response.json()
-    return JsonResponse(data,safe=False,verify=False)
+    return JsonResponse(data,safe=False)
