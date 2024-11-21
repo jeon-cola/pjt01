@@ -22,5 +22,7 @@ app_name='fin'
 urlpatterns = [
     path('saving/',views.get_saving,name='get_saving'),
     path('deposit/',views.get_deposit,name='get_deposit'),
-    path('exchange_rate/',views.exchange_rate,name='exchange_rate')
+    path('exchange_rate/',views.exchange_rate,name='exchange_rate'),
+    path('send_deposit/',views.send_deposit,name='send_deposit'),
+    path('send_saving/',views.send_saving,name='send_saving')
 ]

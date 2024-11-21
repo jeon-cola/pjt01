@@ -60,7 +60,8 @@ const store = useCounterStore();
 
 // API 호출
 onMounted(() => {
-  store.getDeposit();
+  console.log(1)
+  store.send_deposit();
 });
 
 const selectedKorCoNm = ref(""); // 회사명

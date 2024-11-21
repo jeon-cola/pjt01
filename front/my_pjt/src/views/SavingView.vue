@@ -66,7 +66,7 @@ const router = useRouter()
 const store = useCounterStore();
 // 컴포넌트가 마운트된 후 API 호출
 onMounted(() => {
-  store.getSaving(); // 비동기 API 호출 완료될 때까지 대기
+  store.send_saving(); // 비동기 API 호출 완료될 때까지 대기
 });
 
 const selectedKorCoNm = ref(""); // 회사명
